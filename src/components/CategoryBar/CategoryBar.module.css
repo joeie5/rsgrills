@@ -1,0 +1,80 @@
+.wrapper {
+  background-color: #f8f8f8;
+  border-bottom: 3px solid #eee;
+  padding: 1rem 1rem 0.5rem;
+  width: 100%;
+}
+
+.scrollContainer {
+  display: flex;
+  overflow-x: auto;
+  gap: 0.75rem;
+  padding: 0.25rem 0.5rem 1rem;
+  scrollbar-width: none; /* Hide standard scrollbar */
+  -ms-overflow-style: none; /* Hide IE scrollbar */
+}
+
+/* Hide webkit scrollbar */
+.scrollContainer::-webkit-scrollbar {
+  display: none;
+}
+
+.categoryBtn {
+  flex-shrink: 0;
+  padding: 0.65rem 1.75rem;
+  background-color: white;
+  border-radius: 9999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #555;
+  border: 1px solid #e0e0e0;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.categoryBtn:hover {
+  background-color: #fcfcfc;
+  transform: translateY(-1px);
+  border-color: #ccc;
+}
+
+.categoryBtn.active {
+  background-color: var(--primary);
+  color: white;
+  border-color: var(--primary);
+  box-shadow: 0 4px 12px rgba(255, 140, 0, 0.3);
+}
+
+.scrollIndicator {
+  margin-top: -0.5rem;
+  margin-bottom: 0.5rem;
+  display: flex;
+  justify-content: center;
+}
+
+.scrollTrack {
+  width: 100px;
+  height: 4px;
+  background-color: #e0e0e0;
+  border-radius: 10px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Visual cue for scrolling */
+.scrollTrack::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 30%;
+  height: 100%;
+  background-color: var(--primary);
+  border-radius: 10px;
+  animation: moveTrack 2s infinite alternate ease-in-out;
+}
+
+@keyframes moveTrack {
+  from { left: 0; }
+  to { left: 70%; }
+}
