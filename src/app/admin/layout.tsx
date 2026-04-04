@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { LayoutDashboard, ShoppingCart, Package, Map, MapPin, LogOut, Ticket, Settings, Image as ImageIcon, Briefcase } from 'lucide-react';
 import Link from 'next/link';
@@ -10,6 +10,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [loading, setLoading] = useState(true);
   const [session, setSession] = useState<any>(null);
   const router = useRouter();
+  const pathname = usePathname();
+  const isLoginPage = pathname === '/admin/login';
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -40,6 +42,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   };
 
   if (loading) return <div>Loading...</div>;
+
+  // If on Login page, don't show the sidebar wrapper
+  if (isLoginPage) {
+    return <>{children}</>;
+  }
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#f5f5f5' }}>

@@ -36,18 +36,32 @@ export default function AdminLogin() {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      backgroundColor: '#121212',
+      backgroundColor: '#0a0a0a',
+      background: 'radial-gradient(circle at center, #1a1a1a 0%, #0a0a0a 100%)',
       color: 'white',
-      padding: '1rem'
+      padding: '1.5rem',
+      position: 'relative',
+      overflow: 'hidden'
     }}>
       <div style={{
+        position: 'absolute',
+        top: '-10%',
+        right: '-10%',
+        width: '40%',
+        height: '40%',
+        background: 'radial-gradient(circle at center, rgba(255, 140, 0, 0.05) 0%, transparent 70%)',
+        zIndex: 0
+      }} />
+      <div style={{
         width: '100%',
-        maxWidth: '400px',
-        backgroundColor: '#1e1e1e',
-        padding: '2.5rem',
-        borderRadius: '24px',
-        boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
-        border: '1px solid #333'
+        maxWidth: '420px',
+        backgroundColor: 'rgba(30, 30, 30, 0.6)',
+        backdropFilter: 'blur(12px)',
+        padding: '3rem 2.5rem',
+        borderRadius: '28px',
+        boxShadow: '0 25px 60px rgba(0,0,0,0.6)',
+        border: '1px solid rgba(255, 255, 255, 0.08)',
+        zIndex: 1
       }}>
         <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
           <div style={{
@@ -64,7 +78,7 @@ export default function AdminLogin() {
             <Lock size={28} color="white" />
           </div>
           <h1 style={{ fontSize: '1.75rem', fontWeight: 800 }}>Admin Login</h1>
-          <p style={{ color: '#888', marginTop: '0.5rem' }}>Secure access to D'Potters Backend</p>
+          <p style={{ color: '#888', marginTop: '0.5rem' }}>Secure access to RSGrills Backend</p>
         </div>
 
         {error && (
