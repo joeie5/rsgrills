@@ -57,7 +57,9 @@ export default function AdminOrders() {
         display: 'flex', 
         justifyContent: 'space-between', 
         alignItems: 'center',
-        marginBottom: '2rem'
+        marginBottom: '2rem',
+        flexWrap: 'wrap',
+        gap: '1rem'
       }}>
         <h1 style={{ fontSize: '1.75rem', fontWeight: 800 }}>Manage Orders</h1>
         
@@ -185,7 +187,8 @@ export default function AdminOrders() {
             maxWidth: '600px',
             maxHeight: '90vh',
             overflowY: 'auto',
-            padding: '2rem'
+            padding: '1.5rem',
+            margin: '0.5rem'
           }} onClick={e => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
               <h2 style={{ fontSize: '1.5rem', fontWeight: 800 }}>Order Details</h2>
