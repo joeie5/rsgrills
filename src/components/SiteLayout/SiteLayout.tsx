@@ -71,6 +71,19 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
     }
   }, [cartItems, isInitialized]);
 
+  // Prevent background scrolling when store is closed or cart is open
+  useEffect(() => {
+    if (siteSettings?.is_store_open === false || isCartOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [siteSettings?.is_store_open, isCartOpen]);
+
   const addToCart = (product: any, quantity: number) => {
     if (siteSettings?.is_store_open === false) return;
     
