@@ -1,0 +1,201 @@
+.ordersHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.filterSection {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.filterSelect {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  background-color: white;
+  font-weight: 600;
+  font-family: inherit;
+}
+
+/* Table styles */
+.tableContainer {
+  background-color: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.ordersTable {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.ordersTable th {
+  padding: 1.25rem;
+  font-weight: 600;
+  border-bottom: 1px solid #eee;
+  color: #666;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.ordersTable td {
+  padding: 1.25rem;
+  border-bottom: 1px solid #f9f9f9;
+}
+
+.orderRow:hover {
+  background-color: #fcfcfc;
+}
+
+/* Card view for mobile */
+.orderCards {
+  display: none;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.orderCard {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 16px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  border: 1px solid #f0f0f0;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.cardId {
+  font-size: 0.8rem;
+  color: #888;
+  font-weight: 500;
+}
+
+.cardAmount {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--primary);
+}
+
+.cardInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.customerName {
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.deliveryZone {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.cardMeta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  border-top: 1px solid #f5f5f5;
+}
+
+.cardDate {
+  font-size: 0.8rem;
+  color: #888;
+}
+
+/* Modal styles */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: 1rem;
+}
+
+.modalContent {
+  background-color: white;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 2rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  position: relative;
+}
+
+/* Action buttons */
+.viewBtn {
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+  border: 1px solid #eee;
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  background-color: white;
+  transition: all 0.2s;
+}
+
+.viewBtn:hover {
+  background-color: #fef8f3;
+  border-color: var(--primary);
+}
+
+@media (max-width: 768px) {
+  .tableContainer {
+    display: none;
+  }
+
+  .orderCards {
+    display: flex;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .modalContent {
+    padding: 1.5rem;
+    max-height: 95vh;
+  }
+
+  .modalContent h2 {
+    font-size: 1.25rem !important;
+  }
+
+  .detailGrid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+}
