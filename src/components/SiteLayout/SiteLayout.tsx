@@ -73,14 +73,22 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
 
   // Prevent background scrolling when store is closed or cart is open
   useEffect(() => {
-    if (siteSettings?.is_store_open === false || isCartOpen) {
+    const isLocked = siteSettings?.is_store_open === false || isCartOpen;
+    
+    if (isLocked) {
       document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+      document.body.style.height = '100vh';
     } else {
       document.body.style.overflow = 'unset';
+      document.documentElement.style.overflow = 'unset';
+      document.body.style.height = 'unset';
     }
 
     return () => {
       document.body.style.overflow = 'unset';
+      document.documentElement.style.overflow = 'unset';
+      document.body.style.height = 'unset';
     };
   }, [siteSettings?.is_store_open, isCartOpen]);
 
