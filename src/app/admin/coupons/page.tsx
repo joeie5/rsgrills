@@ -31,13 +31,16 @@ export default function AdminCouponsPage() {
 
   const addCoupon = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newCoupon.code || !newCoupon.percentage) return;
+    if (!newCoupon.code || !newCoupon.percentage || !newCoupon.valid_until) {
+      alert('Please fill in all fields, including the expiry date.');
+      return;
+    }
 
     const { error } = await supabase.from('coupons').insert([{
       code: newCoupon.code.toUpperCase(),
       percentage_off: parseInt(newCoupon.percentage),
       valid_from: new Date(newCoupon.valid_from).toISOString(),
-      valid_until: newCoupon.valid_until ? new Date(newCoupon.valid_until).toISOString() : null,
+      valid_until: new Date(newCoupon.valid_until).toISOString(),
       is_active: true
     }]);
 
@@ -119,12 +122,13 @@ export default function AdminCouponsPage() {
               />
             </div>
             <div className={styles.field}>
-              <label className={styles.label}>Valid Until (Optional)</label>
+              <label className={styles.label}>Valid Until</label>
               <input 
                 type="date" 
                 value={newCoupon.valid_until}
                 onChange={e => setNewCoupon({...newCoupon, valid_until: e.target.value})}
                 className={styles.input}
+                required
               />
             </div>
             <button 
@@ -138,28 +142,38 @@ export default function AdminCouponsPage() {
 
         {/* List Section */}
         <div className={styles.listSection}>
-          <h2 className={styles.sectionTitle}>Active Coupons</h2>
+          <h2 className={styles.sectionTitle}>Active & Scheduled Coupons</h2>
           {loading ? (
-            <p>Loading coupons...</p>
+            <div style={{ textAlign: 'center', padding: '3rem', color: '#888' }}>
+              <div className="animate-pulse">Loading coupons...</div>
+            </div>
           ) : coupons.length === 0 ? (
-            <p style={{ color: '#999', textAlign: 'center', padding: '2rem' }}>No coupons found.</p>
+            <div style={{ 
+              textAlign: 'center', 
+              padding: '4rem 2rem', 
+              background: 'white', 
+              borderRadius: '24px', 
+              border: '2px dashed #f0f0f0' 
+            }}>
+              <Tag size={40} style={{ margin: '0 auto 1.5rem', color: '#cbd5e1' }} />
+              <p style={{ color: '#94a3b8', fontWeight: 500 }}>No coupons found. Create your first discount to get started!</p>
+            </div>
           ) : (
             <div className={styles.couponList}>
               {coupons.map(coupon => (
                 <div key={coupon.id} className={styles.couponItem} style={{ 
-                  backgroundColor: coupon.is_active ? 'transparent' : '#f9f9f9',
-                  opacity: coupon.is_active ? 1 : 0.7
+                  opacity: coupon.is_active ? 1 : 0.6,
+                  filter: coupon.is_active ? 'none' : 'grayscale(1)'
                 }}>
                   <div className={styles.couponInfo}>
-                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                       <span className={styles.couponCode}>{coupon.code}</span>
                       <span className={styles.couponBadge}>{coupon.percentage_off}% OFF</span>
                     </div>
                     <div className={styles.couponMeta}>
-                      <Calendar size={14} /> 
+                      <Calendar size={14} style={{ color: 'var(--primary)' }} /> 
                       <span>
-                        {new Date(coupon.valid_from).toLocaleDateString()} 
-                        {coupon.valid_until ? ` - ${new Date(coupon.valid_until).toLocaleDateString()}` : ' (No expiry)'}
+                        Valid {new Date(coupon.valid_from).toLocaleDateString()} — {new Date(coupon.valid_until).toLocaleDateString()}
                       </span>
                     </div>
                   </div>
