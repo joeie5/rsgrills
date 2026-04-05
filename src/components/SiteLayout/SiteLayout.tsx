@@ -77,18 +77,22 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
     
     if (isLocked) {
       document.body.style.overflow = 'hidden';
-      document.documentElement.style.overflow = 'hidden';
-      document.body.style.height = '100vh';
+      // Keep documentElement scrollable but at 100% height to allow pull-to-refresh
+      document.body.style.height = '100dvh';
+      document.documentElement.style.height = '100dvh';
+      document.documentElement.style.overflowY = 'auto';
     } else {
       document.body.style.overflow = 'unset';
       document.documentElement.style.overflow = 'unset';
       document.body.style.height = 'unset';
+      document.documentElement.style.height = 'unset';
     }
 
     return () => {
       document.body.style.overflow = 'unset';
       document.documentElement.style.overflow = 'unset';
       document.body.style.height = 'unset';
+      document.documentElement.style.height = 'unset';
     };
   }, [siteSettings?.is_store_open, isCartOpen]);
 
