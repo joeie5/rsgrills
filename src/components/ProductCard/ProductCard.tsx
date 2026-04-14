@@ -116,22 +116,32 @@ const ProductCard = ({ id, name, category, price, size, images, isCombo, comboOp
         
         <div className={styles.footer}>
           <span className={styles.price}>£{currentPrice.toLocaleString()}</span>
-          <div className={styles.quantityContainer}>
-            <div className={styles.qtySelector}>
-              <button onClick={decrement} className={styles.qtyBtn} type="button">−</button>
-              <span className={styles.qtyValue}>{quantity}</span>
-              <button onClick={increment} className={styles.qtyBtn} type="button">+</button>
+          {isCombo ? (
+             <button 
+               className={styles.addBtn}
+               onClick={handleAddClick}
+               type="button"
+             >
+               Customize
+             </button>
+          ) : (
+            <div className={styles.quantityContainer}>
+              <div className={styles.qtySelector}>
+                <button onClick={decrement} className={styles.qtyBtn} type="button">−</button>
+                <span className={styles.qtyValue}>{quantity}</span>
+                <button onClick={increment} className={styles.qtyBtn} type="button">+</button>
+              </div>
+              <button 
+                className={`${styles.addBtn} ${isAdded ? styles.addedBtn : ''}`}
+                onClick={handleAddClick}
+                aria-label={`Add ${name} to cart`}
+                type="button"
+                disabled={isAdded}
+              >
+                {isAdded ? 'Added ✓' : 'Add'}
+              </button>
             </div>
-            <button 
-              className={`${styles.addBtn} ${isAdded ? styles.addedBtn : ''}`}
-              onClick={handleAddClick}
-              aria-label={`Add ${name} to cart`}
-              type="button"
-              disabled={isAdded}
-            >
-              {isAdded ? 'Added ✓' : 'Add'}
-            </button>
-          </div>
+          )}
         </div>
       </div>
 
@@ -139,7 +149,7 @@ const ProductCard = ({ id, name, category, price, size, images, isCombo, comboOp
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.6)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', backdropFilter: 'blur(4px)' }}>
           <div style={{ backgroundColor: 'white', width: '100%', maxWidth: '500px', borderRadius: '16px', overflow: 'hidden', display: 'flex', flexDirection: 'column', maxHeight: '90vh' }}>
             <div style={{ padding: '1.5rem', backgroundColor: '#f9f9f9', borderBottom: '1px solid #eee', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 800 }}>Customize {name}</h3>
+              <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 800 }}>{name} Combo</h3>
               <button onClick={() => setShowComboModal(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.5rem', lineHeight: 1 }}>&times;</button>
             </div>
             
@@ -151,7 +161,7 @@ const ProductCard = ({ id, name, category, price, size, images, isCombo, comboOp
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
                       <h4 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700 }}>{group.group_name}</h4>
                       <span style={{ fontSize: '0.75rem', backgroundColor: group.required && selected.length === 0 ? '#FEF2F2' : '#F0FDF4', color: group.required && selected.length === 0 ? '#EF4444' : '#22C55E', padding: '0.2rem 0.5rem', borderRadius: '999px', fontWeight: 600 }}>
-                        {group.required ? 'Required' : 'Optional'} &bull; Choose up to {group.max_selections}
+                        Choose up to {group.max_selections}
                       </span>
                     </div>
                     
@@ -182,24 +192,31 @@ const ProductCard = ({ id, name, category, price, size, images, isCombo, comboOp
             <div style={{ padding: '1.5rem', borderTop: '1px solid #eee', backgroundColor: '#fff', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                <div style={{ display: 'flex', flexDirection: 'column' }}>
                  <span style={{ fontSize: '0.85rem', color: '#666' }}>Total</span>
-                 <strong style={{ fontSize: '1.25rem', color: 'var(--primary)' }}>£{currentPrice.toLocaleString()}</strong>
+                 <strong style={{ fontSize: '1.25rem', color: 'var(--primary)' }}>£{(currentPrice * quantity).toLocaleString()}</strong>
                </div>
-               <button 
-                 onClick={executeAdd} 
-                 disabled={!isComboValid()}
-                 style={{ 
-                   backgroundColor: isComboValid() ? 'var(--primary)' : '#ccc', 
-                   color: 'white', 
-                   padding: '0.75rem 2rem', 
-                   borderRadius: '999px', 
-                   fontWeight: 700,
-                   border: 'none',
-                   cursor: isComboValid() ? 'pointer' : 'not-allowed',
-                   transition: 'opacity 0.2s'
-                 }}
-               >
-                 Add to Cart
-               </button>
+               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                 <div className={styles.qtySelector}>
+                   <button onClick={decrement} className={styles.qtyBtn} type="button">−</button>
+                   <span className={styles.qtyValue}>{quantity}</span>
+                   <button onClick={increment} className={styles.qtyBtn} type="button">+</button>
+                 </div>
+                 <button 
+                   onClick={executeAdd} 
+                   disabled={!isComboValid() || isAdded}
+                   style={{ 
+                     backgroundColor: isComboValid() ? 'var(--primary)' : '#ccc', 
+                     color: 'white', 
+                     padding: '0.75rem 2rem', 
+                     borderRadius: '999px', 
+                     fontWeight: 700,
+                     border: 'none',
+                     cursor: isComboValid() ? 'pointer' : 'not-allowed',
+                     transition: 'opacity 0.2s'
+                   }}
+                 >
+                   {isAdded ? 'Added ✓' : 'Add to Cart'}
+                 </button>
+               </div>
             </div>
           </div>
         </div>,
