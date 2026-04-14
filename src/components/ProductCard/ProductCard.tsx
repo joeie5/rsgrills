@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Plus } from 'lucide-react';
 import styles from './ProductCard.module.css';
 
@@ -15,14 +16,19 @@ interface ProductCardProps {
 }
 
 const ProductCard = ({ id, name, category, price, size, images, isCombo, comboOptions, onAdd }: ProductCardProps) => {
-  const [quantity, setQuantity] = React.useState(1);
-  const [isAdded, setIsAdded] = React.useState(false);
+  const [quantity, setQuantity] = useState(1);
+  const [isAdded, setIsAdded] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const increment = () => setQuantity(prev => prev + 1);
   const decrement = () => setQuantity(prev => Math.max(1, prev - 1));
 
-  const [showComboModal, setShowComboModal] = React.useState(false);
-  const [comboSelections, setComboSelections] = React.useState<any>({});
+  const [showComboModal, setShowComboModal] = useState(false);
+  const [comboSelections, setComboSelections] = useState<any>({});
 
   const handleAddClick = () => {
     if (isCombo) {
@@ -129,7 +135,7 @@ const ProductCard = ({ id, name, category, price, size, images, isCombo, comboOp
         </div>
       </div>
 
-      {showComboModal && (
+      {mounted && showComboModal && createPortal(
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.6)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', backdropFilter: 'blur(4px)' }}>
           <div style={{ backgroundColor: 'white', width: '100%', maxWidth: '500px', borderRadius: '16px', overflow: 'hidden', display: 'flex', flexDirection: 'column', maxHeight: '90vh' }}>
             <div style={{ padding: '1.5rem', backgroundColor: '#f9f9f9', borderBottom: '1px solid #eee', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -196,7 +202,8 @@ const ProductCard = ({ id, name, category, price, size, images, isCombo, comboOp
                </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

@@ -242,8 +242,8 @@ export default function AdminProducts() {
       {/* Product Modal */}
       {isModalOpen && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
-          <div style={{ background: 'white', width: '100%', maxWidth: '500px', borderRadius: '16px', padding: '2rem' }}>
-            <h2 style={{ marginBottom: '1.5rem' }}>{editingProduct ? 'Edit Product' : 'Add New Product'}</h2>
+          <div style={{ background: 'white', width: '100%', maxWidth: '500px', borderRadius: '16px', padding: '2rem', maxHeight: '90vh', overflowY: 'auto' }}>
+            <h2 style={{ marginBottom: '1.5rem', flexShrink: 0 }}>{editingProduct ? 'Edit Product' : 'Add New Product'}</h2>
             <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               <div>
                 <label>Product Name</label>
@@ -312,8 +312,8 @@ export default function AdminProducts() {
                     {formData.combo_options.map((group, groupIdx) => (
                       <div key={groupIdx} style={{ padding: '1rem', border: '1px solid #ccc', borderRadius: '8px', backgroundColor: 'white' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
-                          <div style={{ display: 'flex', gap: '1rem', flex: 1 }}>
-                            <div style={{ flex: 2 }}>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', flex: 1 }}>
+                            <div>
                               <label style={{ fontSize: '0.85rem' }}>Group Name</label>
                               <input type="text" placeholder="e.g. Choice of Protein" value={group.group_name} onChange={(e) => {
                                 const newOpts = [...formData.combo_options];
@@ -321,29 +321,32 @@ export default function AdminProducts() {
                                 setFormData({ ...formData, combo_options: newOpts });
                               }} style={{ width: '100%', padding: '0.5rem', borderRadius: '4px', border: '1px solid #ddd' }} />
                             </div>
-                            <div style={{ flex: 1 }}>
-                              <label style={{ fontSize: '0.85rem' }}>Max Selections</label>
-                              <input type="number" min="1" value={group.max_selections} onChange={(e) => {
-                                const newOpts = [...formData.combo_options];
-                                newOpts[groupIdx].max_selections = parseInt(e.target.value) || 1;
-                                setFormData({ ...formData, combo_options: newOpts });
-                              }} style={{ width: '100%', padding: '0.5rem', borderRadius: '4px', border: '1px solid #ddd' }} />
-                            </div>
-                            <div style={{ display: 'flex', alignItems: 'center', paddingTop: '1.5rem' }}>
-                              <label style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.85rem' }}>
+                            
+                            <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                              <div style={{ flex: 1 }}>
+                                <label style={{ fontSize: '0.85rem' }}>Max Selections</label>
+                                <input type="number" min="1" value={group.max_selections} onChange={(e) => {
+                                  const newOpts = [...formData.combo_options];
+                                  newOpts[groupIdx].max_selections = parseInt(e.target.value) || 1;
+                                  setFormData({ ...formData, combo_options: newOpts });
+                                }} style={{ width: '100%', padding: '0.5rem', borderRadius: '4px', border: '1px solid #ddd' }} />
+                              </div>
+                              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', marginTop: '1rem' }}>
                                 <input type="checkbox" checked={group.required} onChange={(e) => {
                                   const newOpts = [...formData.combo_options];
                                   newOpts[groupIdx].required = e.target.checked;
                                   setFormData({ ...formData, combo_options: newOpts });
-                                }} /> Required
+                                }} style={{ width: '16px', height: '16px' }} /> 
+                                Required
                               </label>
                             </div>
                           </div>
+                          
                           <button type="button" onClick={() => {
                             const newOpts = [...formData.combo_options];
                             newOpts.splice(groupIdx, 1);
                             setFormData({ ...formData, combo_options: newOpts });
-                          }} style={{ color: '#ff4444', marginLeft: '1rem', marginTop: '1.5rem' }}>
+                          }} style={{ color: '#ff4444', marginLeft: '1rem', marginTop: '1.5rem', alignSelf: 'flex-start' }}>
                             <Trash size={18} />
                           </button>
                         </div>
