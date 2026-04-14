@@ -72,7 +72,8 @@ const ProductCard = ({ id, name, category, price, size, images, isCombo, comboOp
   const isComboValid = () => {
     if (!isCombo || !comboOptions) return true;
     for (const group of comboOptions) {
-      if (group.required) {
+      // Only enforce 'required' if there are actually options to choose from!
+      if (group.required && group.options && group.options.length > 0) {
         const selected = comboSelections[group.group_name] || [];
         if (selected.length === 0) return false;
       }
@@ -122,7 +123,7 @@ const ProductCard = ({ id, name, category, price, size, images, isCombo, comboOp
                onClick={handleAddClick}
                type="button"
              >
-               Customize
+               View
              </button>
           ) : (
             <div className={styles.quantityContainer}>
@@ -160,9 +161,6 @@ const ProductCard = ({ id, name, category, price, size, images, isCombo, comboOp
                   <div key={idx} style={{ border: '1px solid #eee', borderRadius: '12px', padding: '1rem', backgroundColor: '#fff' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
                       <h4 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700 }}>{group.group_name}</h4>
-                      <span style={{ fontSize: '0.75rem', backgroundColor: group.required && selected.length === 0 ? '#FEF2F2' : '#F0FDF4', color: group.required && selected.length === 0 ? '#EF4444' : '#22C55E', padding: '0.2rem 0.5rem', borderRadius: '999px', fontWeight: 600 }}>
-                        Choose up to {group.max_selections}
-                      </span>
                     </div>
                     
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
