@@ -78,7 +78,9 @@ function HomeContent() {
                   price={product.price}
                   size={product.size}
                   images={product.image_urls || []}
-                  onAdd={(id, qty) => addToCart(product, qty)}
+                  isCombo={product.is_combo}
+                  comboOptions={product.combo_options}
+                  onAdd={(id, qty, comboSelections) => addToCart(product, qty, comboSelections)}
                 />
               ))}
             </div>

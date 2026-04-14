@@ -2,7 +2,19 @@
 
 import React, { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
-import { Plus, Edit, Trash, Package, Search, Image as ImageIcon, Loader2, X } from 'lucide-react';
+import { Plus, Edit, Trash, Package, Search, Image as ImageIcon, Loader2, X, PlusCircle } from 'lucide-react';
+
+interface ComboOption {
+  name: string;
+  price: number;
+}
+
+interface ComboGroup {
+  group_name: string;
+  required: boolean;
+  max_selections: number;
+  options: ComboOption[];
+}
 
 export default function AdminProducts() {
   const [products, setProducts] = useState<any[]>([]);
@@ -20,7 +32,9 @@ export default function AdminProducts() {
     size: '',
     category_id: '',
     image_urls: [] as string[],
-    is_available: true
+    is_available: true,
+    is_combo: false,
+    combo_options: [] as ComboGroup[]
   });
 
   useEffect(() => {
@@ -83,7 +97,9 @@ export default function AdminProducts() {
       size: formData.size,
       category_id: formData.category_id,
       image_urls: formData.image_urls,
-      is_available: formData.is_available
+      is_available: formData.is_available,
+      is_combo: formData.is_combo,
+      combo_options: formData.is_combo ? formData.combo_options : []
     };
 
     if (editingProduct) {
@@ -130,7 +146,7 @@ export default function AdminProducts() {
         <button 
           onClick={() => {
             setEditingProduct(null);
-            setFormData({ name: '', price: '', size: '', category_id: categories[0]?.id || '', image_urls: [], is_available: true });
+            setFormData({ name: '', price: '', size: '', category_id: categories[0]?.id || '', image_urls: [], is_available: true, is_combo: false, combo_options: [] });
             setIsModalOpen(true);
           }}
           style={{ 
@@ -201,7 +217,9 @@ export default function AdminProducts() {
                       size: product.size || '', 
                       category_id: product.category_id, 
                       image_urls: product.image_urls || [],
-                      is_available: product.is_available ?? true 
+                      is_available: product.is_available ?? true,
+                      is_combo: product.is_combo ?? false,
+                      combo_options: product.combo_options || []
                     });
                     setIsModalOpen(true);
                   }}
@@ -280,6 +298,103 @@ export default function AdminProducts() {
                     <input type="file" accept="image/*" onChange={handleFileUpload} disabled={uploading} style={{ display: 'none' }} />
                   </label>
                 </div>
+              </div>
+
+              {/* Combo Options Section */}
+              <div style={{ marginTop: '1rem', padding: '1rem', border: '1px solid #ddd', borderRadius: '8px', backgroundColor: '#f9f9f9' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600, cursor: 'pointer', marginBottom: formData.is_combo ? '1rem' : 0 }}>
+                  <input type="checkbox" checked={formData.is_combo} onChange={(e) => setFormData(prev => ({ ...prev, is_combo: e.target.checked }))} style={{ width: '16px', height: '16px' }} />
+                  Is this a Combo Product?
+                </label>
+
+                {formData.is_combo && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                    {formData.combo_options.map((group, groupIdx) => (
+                      <div key={groupIdx} style={{ padding: '1rem', border: '1px solid #ccc', borderRadius: '8px', backgroundColor: 'white' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
+                          <div style={{ display: 'flex', gap: '1rem', flex: 1 }}>
+                            <div style={{ flex: 2 }}>
+                              <label style={{ fontSize: '0.85rem' }}>Group Name</label>
+                              <input type="text" placeholder="e.g. Choice of Protein" value={group.group_name} onChange={(e) => {
+                                const newOpts = [...formData.combo_options];
+                                newOpts[groupIdx].group_name = e.target.value;
+                                setFormData({ ...formData, combo_options: newOpts });
+                              }} style={{ width: '100%', padding: '0.5rem', borderRadius: '4px', border: '1px solid #ddd' }} />
+                            </div>
+                            <div style={{ flex: 1 }}>
+                              <label style={{ fontSize: '0.85rem' }}>Max Selections</label>
+                              <input type="number" min="1" value={group.max_selections} onChange={(e) => {
+                                const newOpts = [...formData.combo_options];
+                                newOpts[groupIdx].max_selections = parseInt(e.target.value) || 1;
+                                setFormData({ ...formData, combo_options: newOpts });
+                              }} style={{ width: '100%', padding: '0.5rem', borderRadius: '4px', border: '1px solid #ddd' }} />
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', paddingTop: '1.5rem' }}>
+                              <label style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.85rem' }}>
+                                <input type="checkbox" checked={group.required} onChange={(e) => {
+                                  const newOpts = [...formData.combo_options];
+                                  newOpts[groupIdx].required = e.target.checked;
+                                  setFormData({ ...formData, combo_options: newOpts });
+                                }} /> Required
+                              </label>
+                            </div>
+                          </div>
+                          <button type="button" onClick={() => {
+                            const newOpts = [...formData.combo_options];
+                            newOpts.splice(groupIdx, 1);
+                            setFormData({ ...formData, combo_options: newOpts });
+                          }} style={{ color: '#ff4444', marginLeft: '1rem', marginTop: '1.5rem' }}>
+                            <Trash size={18} />
+                          </button>
+                        </div>
+
+                        {/* Options within group */}
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', paddingLeft: '1rem', borderLeft: '2px solid #eee' }}>
+                          <label style={{ fontSize: '0.85rem', fontWeight: 600 }}>Options</label>
+                          {group.options.map((opt, optIdx) => (
+                            <div key={optIdx} style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                              <input type="text" placeholder="Option Name" value={opt.name} onChange={(e) => {
+                                const newOpts = [...formData.combo_options];
+                                newOpts[groupIdx].options[optIdx].name = e.target.value;
+                                setFormData({ ...formData, combo_options: newOpts });
+                              }} style={{ flex: 1, padding: '0.4rem', borderRadius: '4px', border: '1px solid #ddd' }} />
+                              <div style={{ display: 'flex', alignItems: 'center', border: '1px solid #ddd', borderRadius: '4px', paddingLeft: '0.5rem', background: '#fff' }}>
+                                <span style={{ fontSize: '0.8rem', color: '#666' }}>+£</span>
+                                <input type="number" step="0.01" min="0" placeholder="0.00" value={opt.price} onChange={(e) => {
+                                  const newOpts = [...formData.combo_options];
+                                  newOpts[groupIdx].options[optIdx].price = parseFloat(e.target.value) || 0;
+                                  setFormData({ ...formData, combo_options: newOpts });
+                                }} style={{ width: '60px', padding: '0.4rem', border: 'none', background: 'transparent' }} />
+                              </div>
+                              <button type="button" onClick={() => {
+                                const newOpts = [...formData.combo_options];
+                                newOpts[groupIdx].options.splice(optIdx, 1);
+                                setFormData({ ...formData, combo_options: newOpts });
+                              }} style={{ color: '#ff4444', padding: '0.2rem' }}>
+                                <X size={16} />
+                              </button>
+                            </div>
+                          ))}
+                          <button type="button" onClick={() => {
+                            const newOpts = [...formData.combo_options];
+                            newOpts[groupIdx].options.push({ name: '', price: 0 });
+                            setFormData({ ...formData, combo_options: newOpts });
+                          }} style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.85rem', color: 'var(--primary)', fontWeight: 600, width: 'fit-content', marginTop: '0.5rem' }}>
+                            <PlusCircle size={16} /> Add Option
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                    <button type="button" onClick={() => {
+                      setFormData(prev => ({
+                        ...prev,
+                        combo_options: [...prev.combo_options, { group_name: '', required: true, max_selections: 1, options: [] }]
+                      }));
+                    }} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem', border: '1px dashed #aaa', borderRadius: '8px', justifyContent: 'center', color: '#555', fontWeight: 600 }}>
+                      <Plus size={18} /> Add Combo Group
+                    </button>
+                  </div>
+                )}
               </div>
               
               <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>

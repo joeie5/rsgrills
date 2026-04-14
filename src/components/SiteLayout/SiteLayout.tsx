@@ -9,8 +9,8 @@ import styles from '@/app/page.module.css';
 
 interface CartContextType {
   cartItems: any[];
-  addToCart: (product: any, quantity: number) => void;
-  updateQuantity: (id: string, delta: number) => void;
+  addToCart: (product: any, quantity: number, comboSelections?: any) => void;
+  updateQuantity: (cartItemId: string, delta: number) => void;
   isCartOpen: boolean;
   setIsCartOpen: (open: boolean) => void;
   siteSettings: any;
@@ -96,24 +96,43 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
     };
   }, [siteSettings?.is_store_open, isCartOpen]);
 
-  const addToCart = (product: any, quantity: number) => {
+  const addToCart = (product: any, quantity: number, comboSelections?: any) => {
     if (siteSettings?.is_store_open === false) return;
     
     setCartItems(prev => {
-      const existing = prev.find(item => item.id === product.id);
+      const existing = prev.find(item => 
+        item.id === product.id && 
+        JSON.stringify(item.comboSelections || null) === JSON.stringify(comboSelections || null)
+      );
+      
       if (existing) {
         return prev.map(item => 
-          item.id === product.id ? { ...item, quantity: item.quantity + quantity } : item
+          item === existing ? { ...item, quantity: item.quantity + quantity } : item
         );
       }
-      return [...prev, { ...product, quantity }];
+      
+      // Calculate extra price from combo options
+      let extraPrice = 0;
+      if (comboSelections) {
+         Object.values(comboSelections).forEach((selections: any) => {
+            selections.forEach((sel: any) => {
+               extraPrice += sel.price || 0;
+            });
+         });
+      }
+      
+      // Use a unique cart item ID so identical products with different options don't merge incorrectly when updating later
+      const cartItemId = `${product.id}-${Date.now()}`;
+      return [...prev, { ...product, cartItemId, quantity, comboSelections, basePrice: product.price, price: product.price + extraPrice }];
     });
   };
 
-  const updateQuantity = (id: string, delta: number) => {
+  const updateQuantity = (cartItemId: string, delta: number) => {
     setCartItems(prev => 
       prev.map(item => {
-        if (item.id === id) {
+        // Fallback to item.id for items added before this change
+        const identifier = item.cartItemId || item.id;
+        if (identifier === cartItemId) {
           const newQty = Math.max(0, item.quantity + delta);
           return { ...item, quantity: newQty };
         }
@@ -249,9 +268,9 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
           onClose={() => setIsCartOpen(false)}
           items={cartItems}
           onUpdateQuantity={updateQuantity}
-          onRemove={(id) => {
-            const item = cartItems.find(i => i.id === id);
-            if (item) updateQuantity(id, -item.quantity);
+          onRemove={(cartItemId) => {
+            const item = cartItems.find(i => (i.cartItemId || i.id) === cartItemId);
+            if (item) updateQuantity(cartItemId, -item.quantity);
           }}
           onClearCart={() => setCartItems([])}
           deliveryZones={zones}

@@ -7,9 +7,11 @@ import styles from './CartSidebar.module.css';
 
 interface CartItem {
   id: string;
+  cartItemId?: string;
   name: string;
   price: number;
   quantity: number;
+  comboSelections?: any;
 }
 
 interface CartSidebarProps {
@@ -128,7 +130,17 @@ const CartSidebar = ({
       }
 
       // 2. Generate WhatsApp Message
-      const itemsList = items.map(i => `• ${i.name} (x${i.quantity}) - £${(i.price * i.quantity).toLocaleString()}`).join('\n');
+      const itemsList = items.map(i => {
+         let line = `• ${i.name} (x${i.quantity})`;
+         if (i.comboSelections && Object.keys(i.comboSelections).length > 0) {
+            const opts = Object.entries(i.comboSelections).map(([grp, selections]: [string, any]) => 
+               `\n  - ${grp}: ${selections.map((s: any) => s.name).join(', ')}`
+            ).join('');
+            line += opts;
+         }
+         line += ` - £${(i.price * i.quantity).toLocaleString()}`;
+         return line;
+      }).join('\n');
       const orderSummary = `
 *New Order from ${customerName}*
 --------------------------
@@ -191,15 +203,28 @@ ${appliedCoupon ? `*Discount (${appliedCoupon.percentage}%):* -£${discountAmoun
                 </div>
               ) : (
                 items.map(item => (
-                  <div key={item.id} className={styles.item}>
+                  <div key={item.cartItemId || item.id} className={styles.item}>
                     <div className={styles.itemInfo}>
-                      <h3>{item.name}</h3>
-                      <p>£{item.price.toLocaleString()}</p>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                        <h3 style={{ margin: 0 }}>{item.name}</h3>
+                        <p style={{ margin: 0, fontWeight: 700 }}>£{item.price.toLocaleString()}</p>
+                      </div>
+                      
+                      {item.comboSelections && Object.keys(item.comboSelections).length > 0 && (
+                        <div style={{ fontSize: '0.75rem', color: '#666', marginTop: '0.4rem', borderLeft: '2px solid #eee', paddingLeft: '0.5rem' }}>
+                          {Object.entries(item.comboSelections).map(([group, selections]: [string, any]) => (
+                            <div key={group} style={{ marginBottom: '2px' }}>
+                               <strong style={{ fontWeight: 600 }}>{group}:</strong>{' '}
+                               <span>{selections.map((s: any) => `${s.name}${s.price > 0 ? ` (+£${s.price})` : ''}`).join(', ')}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
-                    <div className={styles.controls}>
-                      <button onClick={() => onUpdateQuantity(item.id, -1)}>-</button>
+                    <div className={styles.controls} style={{ marginTop: '0.5rem', alignSelf: 'flex-end' }}>
+                      <button onClick={() => onUpdateQuantity(item.cartItemId || item.id, -1)}>-</button>
                       <span>{item.quantity}</span>
-                      <button onClick={() => onUpdateQuantity(item.id, 1)}>+</button>
+                      <button onClick={() => onUpdateQuantity(item.cartItemId || item.id, 1)}>+</button>
                     </div>
                   </div>
                 ))
