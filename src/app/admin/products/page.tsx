@@ -34,7 +34,11 @@ export default function AdminProducts() {
     image_urls: [] as string[],
     is_available: true,
     is_combo: false,
-    combo_options: [] as ComboGroup[]
+    combo_options: [] as ComboGroup[],
+    tagline: '',
+    description: '',
+    pairs_with: '',
+    notes: ''
   });
 
   useEffect(() => {
@@ -99,7 +103,11 @@ export default function AdminProducts() {
       image_urls: formData.image_urls,
       is_available: formData.is_available,
       is_combo: formData.is_combo,
-      combo_options: formData.is_combo ? formData.combo_options : []
+      combo_options: formData.is_combo ? formData.combo_options : [],
+      tagline: formData.tagline,
+      description: formData.description,
+      pairs_with: formData.pairs_with,
+      notes: formData.notes
     };
 
     if (editingProduct) {
@@ -146,7 +154,7 @@ export default function AdminProducts() {
         <button 
           onClick={() => {
             setEditingProduct(null);
-            setFormData({ name: '', price: '', size: '', category_id: categories[0]?.id || '', image_urls: [], is_available: true, is_combo: false, combo_options: [] });
+            setFormData({ name: '', price: '', size: '', category_id: categories[0]?.id || '', image_urls: [], is_available: true, is_combo: false, combo_options: [], tagline: '', description: '', pairs_with: '', notes: '' });
             setIsModalOpen(true);
           }}
           style={{ 
@@ -219,7 +227,11 @@ export default function AdminProducts() {
                       image_urls: product.image_urls || [],
                       is_available: product.is_available ?? true,
                       is_combo: product.is_combo ?? false,
-                      combo_options: product.combo_options || []
+                      combo_options: product.combo_options || [],
+                      tagline: product.tagline || '',
+                      description: product.description || '',
+                      pairs_with: product.pairs_with || '',
+                      notes: product.notes || ''
                     });
                     setIsModalOpen(true);
                   }}
@@ -264,6 +276,23 @@ export default function AdminProducts() {
                 <select required value={formData.category_id} onChange={e => setFormData({ ...formData, category_id: e.target.value })} style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #ddd' }}>
                    {categories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
                 </select>
+              </div>
+
+              <div>
+                <label>Tagline</label>
+                <input type="text" placeholder="One short line for cards and listings" value={formData.tagline} onChange={e => setFormData({ ...formData, tagline: e.target.value })} style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #ddd' }} />
+              </div>
+              <div>
+                <label>Description</label>
+                <textarea placeholder="2-3 sentences for the product detail view" value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} rows={3} style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #ddd', fontFamily: 'inherit' }} />
+              </div>
+              <div>
+                <label>Pairs well with</label>
+                <input type="text" placeholder="e.g. Jollof Rice, Grilled BBQ Chicken" value={formData.pairs_with} onChange={e => setFormData({ ...formData, pairs_with: e.target.value })} style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #ddd' }} />
+              </div>
+              <div>
+                <label>Notes</label>
+                <input type="text" placeholder="Spice level, allergens, serving guidance" value={formData.notes} onChange={e => setFormData({ ...formData, notes: e.target.value })} style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #ddd' }} />
               </div>
 
               <div>

@@ -80,6 +80,10 @@ function HomeContent() {
                   images={product.image_urls || []}
                   isCombo={product.is_combo}
                   comboOptions={product.combo_options}
+                  tagline={product.tagline}
+                  description={product.description}
+                  pairsWith={product.pairs_with}
+                  notes={product.notes}
                   onAdd={(id, qty, comboSelections) => addToCart(product, qty, comboSelections)}
                 />
               ))}

@@ -12,13 +12,19 @@ interface ProductCardProps {
   images: string[];
   isCombo?: boolean;
   comboOptions?: any[];
+  tagline?: string;
+  description?: string;
+  pairsWith?: string;
+  notes?: string;
   onAdd: (id: string, quantity: number, comboSelections?: any) => void;
 }
 
-const ProductCard = ({ id, name, category, price, size, images, isCombo, comboOptions, onAdd }: ProductCardProps) => {
+const ProductCard = ({ id, name, category, price, size, images, isCombo, comboOptions, tagline, description, pairsWith, notes, onAdd }: ProductCardProps) => {
   const [quantity, setQuantity] = useState(1);
   const [isAdded, setIsAdded] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
+  const hasDetails = Boolean(description || pairsWith || notes);
 
   useEffect(() => {
     setMounted(true);
@@ -113,8 +119,27 @@ const ProductCard = ({ id, name, category, price, size, images, isCombo, comboOp
       <div className={styles.content}>
         <p className={styles.category}>{category.toUpperCase()}</p>
         <h3 className={styles.name}>{name}</h3>
+        {tagline && <p className={styles.tagline}>{tagline}</p>}
         <p className={styles.size}>{size}</p>
-        
+
+        {hasDetails && (
+          <button
+            type="button"
+            className={styles.detailsToggle}
+            onClick={() => setShowDetails(prev => !prev)}
+          >
+            {showDetails ? 'Hide details' : 'Details'}
+          </button>
+        )}
+
+        {showDetails && (
+          <div className={styles.details}>
+            {description && <p className={styles.detailsDescription}>{description}</p>}
+            {pairsWith && <p className={styles.detailsRow}><strong>Pairs well with:</strong> {pairsWith}</p>}
+            {notes && <p className={styles.detailsRow}><strong>Notes:</strong> {notes}</p>}
+          </div>
+        )}
+
         <div className={styles.footer}>
           <span className={styles.price}>£{currentPrice.toLocaleString()}</span>
           {isCombo ? (
